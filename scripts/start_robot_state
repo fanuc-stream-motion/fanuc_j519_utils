@@ -1,0 +1,25 @@
+#!/usr/bin/env python3
+
+import argparse
+import socket
+import struct
+import time
+
+J519_DEFAULT_PORT=60015
+J519_VERSION=1
+J519_PKT_START=0
+PKT_STOP_DATA=struct.pack('>2I', J519_PKT_START, J519_VERSION)
+
+parser = argparse.ArgumentParser(formatter_class=argparse.ArgumentDefaultsHelpFormatter)
+parser.add_argument('HOST', help='Hostname or IP address of controller')
+parser.add_argument('PORT', nargs='?',
+    help='UDP port to send pkts to',
+    default=J519_DEFAULT_PORT)
+args = parser.parse_args()
+
+sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+sock.sendto(PKT_STOP_DATA, (args.HOST, args.PORT))
+
+print ('Sent DATA START packet to udp://{}:{}\n'.format(args.HOST, args.PORT))
+
+time.sleep(0.5)
